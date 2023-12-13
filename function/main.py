@@ -39,6 +39,12 @@ def analyze_image(image_file):
     print(output)
     return output
 
+
+def check_string(input_string):
+  if not input_string:
+    return "Unable to generate description"
+  return input_string
+
 def run_it(request):
   try:
     project_id = os.environ.get("PROJECT_ID")
@@ -46,7 +52,8 @@ def run_it(request):
     vertexai.init(project=project_id, location=region)
     file_to_analyze = list_url(request)
     image_description = analyze_image(file_to_analyze)
-    return_value = json.loads(image_description)
+    result = check_string(image_description)
+    return_value = json.loads(result)
     return_json = ({"replies": return_value})
     return return_json
   except Exception as e:
