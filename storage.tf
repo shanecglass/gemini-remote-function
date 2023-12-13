@@ -27,7 +27,7 @@ resource "google_storage_bucket" "function_source" {
 
 ##Upload the function source code to the bucket
 resource "google_storage_bucket_object" "source_upload" {
-  name   = "main.py"
+  name   = "function_source.zip"
   bucket = google_storage_bucket.function_source.name
   source = data.archive_file.create_function_zip.output_path
 }
