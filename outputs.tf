@@ -24,7 +24,19 @@ output "bigquery_editor_url" {
   description = "The URL to launch the BigQuery editor with the sample query procedure opened"
 }
 
-output "remote_function_query" {
+output "create_remote_function_query" {
+  value = templatefile("${path.module}/src/sql/provision_remote_function.sql", {
+    project_id           = module.project-services.project_id,
+    dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
+    remote_function_name = google_cloudfunctions2_function.remote_function.name
+    region               = var.region
+    bq_connection_id     = google_bigquery_connection.function_connection.id
+    remote_function_url  = google_cloudfunctions2_function.remote_function.service_config[0].uri
+    }
+  )
+}
+
+output "run_remote_function_query" {
   value = templatefile("${path.module}/src/sql/query_remote_function.sql", {
     project_id           = module.project-services.project_id,
     dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
