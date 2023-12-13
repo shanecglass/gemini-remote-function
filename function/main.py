@@ -41,11 +41,9 @@ def run_it(request):
     project_id = os.environ.get("PROJECT_ID")
     region = os.environ.get("REGION")
     vertexai.init(project=project_id, location=region)
-    return_value = []
     file_to_analyze = list_url(request)
     image_description = analyze_image(file_to_analyze)
-    return_value.append(image_description)
-    return_json = json.dumps({"replies": return_value})
+    return_json = ({"replies": image_description})
     return return_json
   except Exception as e:
     return json.dumps({"errorMessage": str(e)}), 400
