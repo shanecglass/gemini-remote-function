@@ -53,8 +53,7 @@ def run_it(request):
     file_to_analyze = list_url(request)
     image_description = analyze_image(file_to_analyze)
     result = check_string(image_description)
-    return_value = json.loads(result)
-    return_json = ({"replies": return_value})
+    return_json = json.dumps({"replies": result})
     return return_json
   except Exception as e:
     return json.dumps({"errorMessage": str(e)}), 400
