@@ -53,7 +53,7 @@ resource "google_project_iam_member" "functions_invoke_roles" {
 #Create GCS object table for your images. This will be the input table for the remote function
 resource "google_bigquery_table" "object_table" {
   project             = module.project-services.project_id
-  dataset_id          = google_bigquery_dataset.dest_dataset.dataset_id
+  dataset_id          = google_bigquery_dataset.demo_dataset.dataset_id
   table_id            = "image_object_table"
   deletion_protection = var.deletion_protection
 
@@ -81,7 +81,7 @@ resource "google_bigquery_routine" "create_remote_function_sp" {
     remote_function_name = google_cloudfunctions2_function.remote_function.name
     region = var.region
     bq_connection_id = google_bigquery_connection.function_connection.id
-    remote_function_url = output.function_url
+    remote_function_url = google_cloudfunctions2_function.remote_function.output.function_url
     }
   )
 }
