@@ -41,7 +41,7 @@ create_tables:
                     useQueryCache: false
                     location: $${sys.get_env("GOOGLE_CLOUD_LOCATION")}
                     timeoutMs: 600000
-                    query: query_sp
+                    query: ${query_sp}
             result: queryResult
         - sumStep:
             assign:
