@@ -4,7 +4,9 @@ from google.cloud.storage import Blob
 import json
 import os
 import vertexai
-from vertexai.preview.generative_models import GenerativeModel, Image
+from vertexai.preview import generative_models
+from vertexai.preview.generative_models import GenerativeModel
+from vertexai.preview.generative_models import Part
 
 
 @functions_framework.http
@@ -22,10 +24,10 @@ def list_url(request):
 
 
 def analyze_image(image_file):
-  multimodal_model = GenerativeModel("gemini-pro-vision")
-  image = multimodal_model.Part.from_uri(
+  gemini_pro_vision_model = GenerativeModel("gemini-pro-vision")
+  image = generative_models.Part.from_uri(
       image_file, mime_type="image/jpeg")
-  responses = multimodal_model.generate_content([
+  responses = gemini_pro_vision_model.generate_content([
       'Describe and summarize this image. Use no more than 5 sentences to do so', image],
       stream=True
   )
