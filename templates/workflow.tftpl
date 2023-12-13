@@ -33,17 +33,16 @@ create_tables:
                 - project_id: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
                 - query_sp: $${"CALL `"+project_id+"."+dataset_id+".remote_function_sp`();"}
         - createStepTables:
-            - runQuery:
-                call: googleapis.bigquery.v2.jobs.query
-                args:
-                    projectId: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-                    body:
-                        useLegacySql: false
-                        useQueryCache: false
-                        location: $${sys.get_env("GOOGLE_CLOUD_LOCATION")}
-                        timeoutMs: 600000
-                        query: query_sp
-                result: queryResult
-            - sumStep:
-                assign:
-                    - results: $${queryResult}
+            call: googleapis.bigquery.v2.jobs.query
+            args:
+                projectId: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+                body:
+                    useLegacySql: false
+                    useQueryCache: false
+                    location: $${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+                    timeoutMs: 600000
+                    query: query_sp
+            result: queryResult
+        - sumStep:
+            assign:
+                - results: $${queryResult}
