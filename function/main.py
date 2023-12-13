@@ -1,11 +1,12 @@
 import functions_framework
-from google.cloud import aiplatform
-from vertexai.preview.generative_models import GenerativeModel, Image
+import google.cloud.storage as gcs
+from google.cloud.storage import Blob
 import json
+import logging
 import os.path
-import subprocess
 import tempfile
 import vertexai
+from vertexai.preview.generative_models import GenerativeModel, Image
 
 tmpdir = tempfile.mkdtemp()
 multimodal_model = GenerativeModel("gemini-pro-vision")
@@ -24,18 +25,26 @@ def list_url(request):
     return json.dumps({"errorMessage": str(e)}), 400
 
 
-def download_to_local(image_uri, tmpdir):
-  print(f"File to analze from GCS: ", image_uri)
-  image_name = 'image.png'
-  dest_path = os.path.join(tmpdir, image_name)
-  download_command = f"gsutil cp {image_uri} .{dest_path}"
-  subprocess.run(download_command)
+def copy_fromgcs(blob_name, destdir, basename):
+  client = gcs.Client()
+  blob = Blob.from_string(blob_name, client=client)
+  logging.info('Downloading {}'.format(blob))
+  dest = os.path.join(destdir, basename)
+  blob.download_to_filename(dest)
+  return dest
+
+# def download_to_local(image_uri, tmpdir):
+#   print(f"File to analze from GCS: ", image_uri)
+#   dest_path = os.path.join(tmpdir, 'image.png')
+#   download_command = f"gsutil cp {image_uri} .{dest_path}"
+#   subprocess.run(download_command)
+#   image = Image.load_from_file(image_name)
+#   print(f'{image_name} downloaded')
+#   return image
+
+
+def analyze_image(image_name):
   image = Image.load_from_file(image_name)
-  print(f'{image_name} downloaded')
-  return image
-
-
-def analyze_image(image):
   responses = multimodal_model.generate_content([
       'Describe and summarize this image. Use no more than 5 sentences to do so', image],
       stream=True
@@ -51,8 +60,8 @@ def run_it(request):
     region = os.environ.get("REGION")
     vertexai.init(project=project_id, location=region)
     return_value = []
-    uri = list_url(request)
-    local_file_to_analyze = download_to_local(uri, tmpdir)
+    local_file_to_analyze = copy_fromgcs(
+        list_url(request), tmpdir, "image.png")
     image_description = analyze_image(local_file_to_analyze)
     return_value.append(image_description)
     return_json = json.dumps({"replies": return_value})
