@@ -30,7 +30,7 @@ variable "image_object_path" {
   default     = "[gs://gemini-image-recognition-demo/images/*.jpg]"
 }
 
-variable "conection_id" {
+variable "connection_id" {
   type        = string
   description = "Default ID for the BigQuery connection that is created"
   default     = "gcf-connection"

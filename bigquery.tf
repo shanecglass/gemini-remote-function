@@ -24,7 +24,7 @@ resource "google_bigquery_dataset" "demo_dataset" {
 
 #Create BigQuery connection for Cloud Functions and GCS
 resource "google_bigquery_connection" "function_connection" {
-  connection_id = var.conection_id
+  connection_id = var.connection_id
   project       = module.project-services.project_id
   location      = var.region
   friendly_name = "Gemini connection"
@@ -80,7 +80,7 @@ resource "google_bigquery_routine" "create_remote_function_sp" {
     dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
     remote_function_name = google_cloudfunctions2_function.remote_function.name
     region               = var.region
-    bq_connection_id     = google_bigquery_connection.function_connection.id
+    bq_connection_id     = var.connection_id
     remote_function_url  = google_cloudfunctions2_function.remote_function.service_config[0].uri
     }
   )
