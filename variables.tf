@@ -27,7 +27,7 @@ variable "region" {
 variable "image_object_path" {
   type        = string
   description = "URI for the GCS bucket containing the images to be analyzed. This is connected to BigQuery as a GCS object table"
-  default = "[gs://gemini-image-recognition-demo/images/*.jpg]"
+  default     = "[gs://gemini-image-recognition-demo/images/*.jpg]"
 }
 
 variable "enable_apis" {

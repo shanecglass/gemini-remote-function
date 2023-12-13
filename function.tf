@@ -28,9 +28,9 @@ resource "google_service_account" "cloud_function_manage_sa" {
 
 resource "google_project_iam_member" "function_manage_roles" {
   for_each = toset([
-    "roles/cloudfunctions.admin",         // Service account role to manage access to the remote function
-    "roles/storage.objectAdmin",          // Read/write GCS files
-    "roles/bigquery.admin",               // Create jobs and modify BigQuery tables
+    "roles/cloudfunctions.admin", // Service account role to manage access to the remote function
+    "roles/storage.objectAdmin",  // Read/write GCS files
+    "roles/bigquery.admin",       // Create jobs and modify BigQuery tables
     "roles/iam.serviceAccountUser"
     ]
   )
@@ -43,9 +43,9 @@ resource "google_project_iam_member" "function_manage_roles" {
 
 ## Create a Cloud Function to serve as the remote function
 resource "google_cloudfunctions2_function" "remote_function" {
-  name     = "gemini-bq-demo"
-  project = module.project-services.project_id
-  location = var.region
+  name        = "gemini-bq-demo"
+  project     = module.project-services.project_id
+  location    = var.region
   description = "A Cloud Function that uses the Gemini Generative Model to analyze and describe images."
 
   build_config {
@@ -61,20 +61,20 @@ resource "google_cloudfunctions2_function" "remote_function" {
   }
 
   service_config {
-    max_instance_count  = 10
-    min_instance_count = 1
-    available_memory    = "2Gi"
-    timeout_seconds     = 300
+    max_instance_count               = 10
+    min_instance_count               = 1
+    available_memory                 = "2Gi"
+    timeout_seconds                  = 300
     max_instance_request_concurrency = 1
-    available_cpu = "4"
-    ingress_settings = "ALLOW_ALL"
-    all_traffic_on_latest_revision = true
-    service_account_email = google_service_account.cloud_function_manage_sa.email
+    available_cpu                    = "4"
+    ingress_settings                 = "ALLOW_ALL"
+    all_traffic_on_latest_revision   = true
+    service_account_email            = google_service_account.cloud_function_manage_sa.email
     environment_variables = {
-      "PROJECT_ID":"${module.project-services.project_id}",
-      "REGION":"${var.region}"}
+      "PROJECT_ID" : "${module.project-services.project_id}",
+    "REGION" : "${var.region}" }
   }
-  depends_on = [ time_sleep.wait_after_apis ]
+  depends_on = [time_sleep.wait_after_apis]
 }
 
 output "function_url" {

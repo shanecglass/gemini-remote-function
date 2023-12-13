@@ -16,29 +16,29 @@
 
 #Create dataset to host the GCS object table
 resource "google_bigquery_dataset" "demo_dataset" {
-  project             = module.project-services.project_id
-  dataset_id          = "gemini_demo"
-  location            = var.region
-  depends_on          = [time_sleep.wait_after_apis]
+  project    = module.project-services.project_id
+  dataset_id = "gemini_demo"
+  location   = var.region
+  depends_on = [time_sleep.wait_after_apis]
 }
 
 #Create BigQuery connection for Cloud Functions and GCS
 resource "google_bigquery_connection" "function_connection" {
-    connection_id = "gcf-connection"
-    project       = module.project-services.project_id
-    location      = var.region
-    friendly_name = "Gemini connection"
-    description   = "Connecting to the remote function that analyzes imges using Gemini"
-    cloud_resource {}
-    depends_on    = [ time_sleep.wait_after_apis ]
+  connection_id = "gcf-connection"
+  project       = module.project-services.project_id
+  location      = var.region
+  friendly_name = "Gemini connection"
+  description   = "Connecting to the remote function that analyzes imges using Gemini"
+  cloud_resource {}
+  depends_on = [time_sleep.wait_after_apis]
 }
 
 #Grant the connection service account necessary permissions
 resource "google_project_iam_member" "functions_invoke_roles" {
   for_each = toset([
-    "roles/run.invoker",                    // Service account role to invoke the remote function
-    "roles/cloudfunctions.invoker",         // Service account role to invoke the remote function
-    "roles/storage.objectViewer",            // View GCS objects to create object tables
+    "roles/run.invoker",            // Service account role to invoke the remote function
+    "roles/cloudfunctions.invoker", // Service account role to invoke the remote function
+    "roles/storage.objectViewer",   // View GCS objects to create object tables
     "roles/iam.serviceAccountUser"
     ]
   )
@@ -57,10 +57,10 @@ resource "google_bigquery_table" "object_table" {
   table_id            = "image_object_table"
   deletion_protection = var.deletion_protection
 
-  external_data_configuration{
-    autodetect = false
-    connection_id = google_bigquery_connection.function_connection.id
-    source_uris = ["${google_storage_bucket.demo_images.url}/*"]
+  external_data_configuration {
+    autodetect      = false
+    connection_id   = google_bigquery_connection.function_connection.id
+    source_uris     = ["${google_storage_bucket.demo_images.url}/*"]
     object_metadata = "Simple"
   }
 
@@ -76,12 +76,12 @@ resource "google_bigquery_routine" "create_remote_function_sp" {
   routine_type = "PROCEDURE"
   language     = "SQL"
   definition_body = templatefile("${path.module}/src/sql/provision_remote_function.sql", {
-    project_id = module.project-services.project_id,
-    dataset_id = google_bigquery_dataset.demo_dataset.dataset_id
+    project_id           = module.project-services.project_id,
+    dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
     remote_function_name = google_cloudfunctions2_function.remote_function.name
-    region = var.region
-    bq_connection_id = google_bigquery_connection.function_connection.id
-    remote_function_url = google_cloudfunctions2_function.remote_function.service_config[0].uri
+    region               = var.region
+    bq_connection_id     = google_bigquery_connection.function_connection.id
+    remote_function_url  = google_cloudfunctions2_function.remote_function.service_config[0].uri
     }
   )
 }
@@ -94,10 +94,10 @@ resource "google_bigquery_routine" "query_remote_function_sp" {
   routine_type = "PROCEDURE"
   language     = "SQL"
   definition_body = templatefile("${path.module}/src/sql/query_remote_function.sql", {
-    project_id = module.project-services.project_id,
-    dataset_id = google_bigquery_dataset.demo_dataset.dataset_id
+    project_id           = module.project-services.project_id,
+    dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
     remote_function_name = google_cloudfunctions2_function.remote_function.name
-    object_table_id = google_bigquery_table.object_table.table_id
+    object_table_id      = google_bigquery_table.object_table.table_id
     }
   )
   depends_on = [

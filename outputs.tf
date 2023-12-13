@@ -25,6 +25,11 @@ output "bigquery_editor_url" {
 }
 
 output "remote_function_query" {
-  value       = templatefile("${path.module}/src/sql/provision_remote_function.sql")
+  value = templatefile("${path.module}/src/sql/query_remote_function.sql", {
+    project_id           = module.project-services.project_id,
+    dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
+    remote_function_name = google_cloudfunctions2_function.remote_function.name
+    object_table_id      = google_bigquery_table.object_table.table_id
+  })
   description = "The URL to launch the in-console tutorial for the EDW solution"
 }
