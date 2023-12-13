@@ -31,7 +31,7 @@ resource "google_project_iam_member" "workflow_service_account_roles" {
     "roles/run.invoker",
     "roles/iam.serviceAccountTokenCreator",
     "roles/storage.objectAdmin",
-    "roles/bigquery.connectionUser",
+    "roles/bigquery.connectionAdmin",
     "roles/bigquery.jobUser",
     "roles/bigquery.dataEditor",
     ]
