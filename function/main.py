@@ -1,34 +1,14 @@
-import bigframes.pandas as bpd
 import functions_framework
-import google.cloud.bigquery as bigquery
-import google.cloud.storage as gcs
-from google.cloud.storage import Blob
 from google.cloud import aiplatform
-from google.cloud.aiplatform.private_preview.generative_models import GenerativeModel, Image
+from vertexai.preview.generative_models import GenerativeModel, Image
 import json
-import logging
 import os.path
-import pandas as pd
 import subprocess
-import sys
 import tempfile
 import vertexai
 
 tmpdir = tempfile.mkdtemp()
 multimodal_model = GenerativeModel("gemini-pro-vision")
-
-# #Download package
-# def download_package(destdir):
-#   client = gcs.Client()
-#   blob = Blob.from_string("gs://vertex_sdk_internal_releases/Gemini/Python/google_cloud_aiplatform-1.37.dev20231201+generative.models-py2.py3-none-any.whl", client=client)
-#   logging.info('Downloading {}'.format(blob))
-#   dest = os.path.join(destdir, "google_cloud_aiplatform-1.37.dev20231201+generative.models-py2.py3-none-any.whl")
-#   blob.download_to_filename(dest)
-#   return dest
-
-# def install_package(input_file):
-#   subprocess.check_call([sys.executable, "-m", "pip", "install", input_file])
-#   print("Package install successful")
 
 @functions_framework.http
 def list_url(request):
@@ -59,11 +39,7 @@ def download_to_local(request, tmpdir):
   return images_to_analyze
 
 def analyze_image(images_to_analyze):
-  pandas_df = pd.DataFrame(columns=["name", "is_bridge"])
-  for index, image in enumerate(images_to_analyze, start=1):
-    if index < 3:
-      continue
-    else:
+  for image in images_to_analyze:
       responses = multimodal_model.generate_content([
         'Describe and summarize this image. Use no more than 5 sentences to do so', image],
         stream=True
@@ -79,7 +55,6 @@ def run_it(request):
     region = os.environ.get("REGION")
     vertexai.init(project=project_id, location=region)
     return_value = []
-    # install_package(download_package(tmpdir))
     local_file_to_analyze = download_to_local(request, tmpdir)
     image_description = analyze_image(local_file_to_analyze)
     return_value.append(image_description)

@@ -21,7 +21,9 @@ resource "google_service_account" "cloud_function_manage_sa" {
   account_id   = "gemini-demo"
   display_name = "Cloud Functions Service Account"
 
-  depends_on = [google_project_service_identity.cloud_functions]
+  depends_on = [
+    time_sleep.wait_after_apis_activate,
+  ]
 }
 
 resource "google_project_iam_member" "function_manage_roles" {
@@ -44,7 +46,7 @@ resource "google_cloudfunctions2_function" "remote_function" {
   name     = "gemini-bq-demo"
   project = module.project-services.project_id
   location = var.region
-  description = "A Cloud Function that uses the Gemini Generative Model to analyze images and identify landmarks."
+  description = "A Cloud Function that uses the Gemini Generative Model to analyze and describe images."
 
   build_config {
     runtime     = "python311"

@@ -31,3 +31,22 @@ resource "google_storage_bucket_object" "source_upload" {
   bucket = google_storage_bucket.function_source.name
   source = data.archive_file.create_function_zip.output_path
 }
+
+# Create a GCS bucket to upload demo images
+## Use a random string for the bucket name to avoid conflicts
+resource "google_storage_bucket" "demo_images" {
+  name          = "gemini-bq-demo-images${random_id.id.hex}"
+  project       = module.project-services.project_id
+  location      = var.region
+  uniform_bucket_level_access = true
+  force_destroy = var.force_destroy
+  depends_on    = [time_sleep.wait_after_apis]
+}
+
+## Upload the sample images to the bucket
+resource "google_storage_bucket_object" "image_upload" {
+  for_each = fileset("${path.module}/src/images", "*.jpg")
+  name   = each.value
+  bucket = google_storage_bucket.function_source.name
+  source = each.value
+}

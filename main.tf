@@ -52,6 +52,12 @@ module "project-services" {
   ]
 }
 
+# Wait until after the APIs are activated to being setting up infrastructure
+resource "time_sleep" "wait_after_apis" {
+  create_duration = "90s"
+  depends_on      = [module.project-services]
+}
+
 # Create random ID to be used for deployment uniqueness
 resource "random_id" "id" {
   byte_length = 4
@@ -64,9 +70,12 @@ data "archive_file" "create_function_zip" {
   source_dir  = "${path.root}/function/"
 }
 
+# Wait until the Cloud Workflow has finished to complete setup
 resource "time_sleep" "wait_after_apis" {
-  create_duration = "90s"
-  depends_on      = [module.project-services]
+  create_duration = "120s"
+  depends_on      = [
+    data.http.call_workflows_setup,
+    google_bigquery_routine.query_remote_function_sp,
+
+    ]
 }
-
-

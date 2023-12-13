@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#Create dataset for sample hail events and sample customer data
+#Create dataset to host the GCS object table
 resource "google_bigquery_dataset" "demo_dataset" {
   project             = module.project-services.project_id
   dataset_id          = "gemini_demo"
@@ -33,7 +33,7 @@ resource "google_bigquery_connection" "function_connection" {
     depends_on    = [ time_sleep.wait_after_apis_activate ]
 }
 
-#Grant connection service account necessary permissions
+#Grant the connection service account necessary permissions
 resource "google_project_iam_member" "functions_invoke_roles" {
   for_each = toset([
     "roles/run.invoker",                    // Service account role to invoke the remote function
@@ -50,7 +50,7 @@ resource "google_project_iam_member" "functions_invoke_roles" {
   depends_on = [google_bigquery_connection.function_connection]
 }
 
-#Create GCS object table for sample hail event data. This is what input table for the remote function
+#Create GCS object table for your images. This will be the input table for the remote function
 resource "google_bigquery_table" "object_table" {
   project             = module.project-services.project_id
   dataset_id          = google_bigquery_dataset.dest_dataset.dataset_id
@@ -60,13 +60,15 @@ resource "google_bigquery_table" "object_table" {
   external_data_configuration{
     autodetect = false
     connection_id = google_bigquery_connection.function_connection.id
-    source_uris = var.image_object_path
+    source_uris = "[${google_storage_bucket.demo_images.url}/*]"
     object_metadata = "Simple"
   }
 
-  depends_on = [google_project_iam_member.functions_invoke_roles, google_storage_bucket_object.geojson_upload, google_bigquery_dataset.dest_dataset]
+  depends_on = [google_project_iam_member.functions_invoke_roles, google_storage_bucket_object.image_upload]
 }
 
+# Create a series of stored procedures to connect to the remote function and call it
+## Create the remote function. This stored procedure will be called by the workflow
 resource "google_bigquery_routine" "create_remote_function_sp" {
   project      = module.project-services.project_id
   dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
@@ -79,11 +81,12 @@ resource "google_bigquery_routine" "create_remote_function_sp" {
     remote_function_name = google_cloudfunctions2_function.remote_function.name
     region = var.region
     bq_connection_id = google_bigquery_connection.function_connection.id
-    remote_function_url = google_cloudfunctions2_function.remote_function.url
+    remote_function_url = output.function_url
     }
   )
 }
 
+#Sample query to call the remote function
 resource "google_bigquery_routine" "query_remote_function_sp" {
   project      = module.project-services.project_id
   dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
@@ -97,4 +100,7 @@ resource "google_bigquery_routine" "query_remote_function_sp" {
     object_table_id = google_bigquery_table.object_table.table_id
     }
   )
+  depends_on = [
+    google_bigquery_routine.create_remote_function_sp
+  ]
 }
