@@ -47,6 +47,6 @@ resource "google_storage_bucket" "demo_images" {
 resource "google_storage_bucket_object" "image_upload" {
   for_each = fileset("${path.module}/src/images", "*.jpg")
   name     = each.value
-  bucket   = google_storage_bucket.function_source.name
+  bucket   = google_storage_bucket.demo_images.name
   source   = "${path.module}/src/images/${each.value}"
 }

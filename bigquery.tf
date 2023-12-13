@@ -94,10 +94,10 @@ resource "google_bigquery_routine" "query_remote_function_sp" {
   routine_type = "PROCEDURE"
   language     = "SQL"
   definition_body = templatefile("${path.module}/src/sql/query_remote_function.sql", {
-    project_id           = module.project-services.project_id,
-    dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
-    bq_function_name     = "gemini_bq_demo"
-    object_table_id      = google_bigquery_table.object_table.table_id
+    project_id       = module.project-services.project_id,
+    dataset_id       = google_bigquery_dataset.demo_dataset.dataset_id
+    bq_function_name = "gemini_bq_demo"
+    object_table_id  = google_bigquery_table.object_table.table_id
     }
   )
   depends_on = [
