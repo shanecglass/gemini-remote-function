@@ -25,6 +25,6 @@ output "bigquery_editor_url" {
 }
 
 output "remote_function_query" {
-  value       = "${path.module}/src/sql/provision_remote_function.sql"
+  value       = templatefile("${path.module}/src/sql/provision_remote_function.sql")
   description = "The URL to launch the in-console tutorial for the EDW solution"
 }
