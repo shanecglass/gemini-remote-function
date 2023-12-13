@@ -14,22 +14,22 @@ multimodal_model = GenerativeModel("gemini-pro-vision")
 def list_url(request):
   print(request)
   try:
+    all_uris_to_download = []
     request_json = request.get_json()
     calls = request_json['calls']
     for call in calls:
       image_url = str(call[0])
+      all_uris_to_download.append(image_url)
       print(image_url)
-    return image_url
+    return all_uris_to_download
   except Exception as e:
     return json.dumps({"errorMessage": str(e)}), 400
 
-def download_to_local(request, tmpdir):
+
+def download_to_local(list_of_gcs_files, tmpdir):
   images_to_analyze = []
-  analysis_list = []
-  for gsc_uri in (list_url(request)):
-    analysis_list.append(gsc_uri)
-  print(f"List of files to analze from GCS: ", analysis_list)
-  for index, gsc_uri in enumerate(analysis_list, start = 1):
+  print(f"List of files to analze from GCS: ", list_of_gcs_files)
+  for index, gsc_uri in enumerate(list_of_gcs_files, start=1):
     image_name = f'image_{index}.png'
     dest_path = os.path.join(tmpdir, image_name)
     subprocess.run(f'gsutil cp {gsc_uri} ./{dest_path}')
@@ -55,7 +55,8 @@ def run_it(request):
     region = os.environ.get("REGION")
     vertexai.init(project=project_id, location=region)
     return_value = []
-    local_file_to_analyze = download_to_local(request, tmpdir)
+    uri_list = list_url(request)
+    local_file_to_analyze = download_to_local(uri_list, tmpdir)
     image_description = analyze_image(local_file_to_analyze)
     return_value.append(image_description)
     return_json = json.dumps({"replies": return_value})
