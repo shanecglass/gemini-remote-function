@@ -24,7 +24,7 @@ resource "google_bigquery_dataset" "demo_dataset" {
 
 #Create BigQuery connection for Cloud Functions and GCS
 resource "google_bigquery_connection" "function_connection" {
-  connection_id = "gcf-connection"
+  connection_id = var.conection_id
   project       = module.project-services.project_id
   location      = var.region
   friendly_name = "Gemini connection"
