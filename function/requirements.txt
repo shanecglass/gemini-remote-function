@@ -1,4 +1,4 @@
-functions-framework==3.4.0
+functions-framework
 google-cloud-aiplatform==2.11.0
 vertexai==2.11.0
 
