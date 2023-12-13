@@ -60,7 +60,7 @@ resource "google_bigquery_table" "object_table" {
   external_data_configuration{
     autodetect = false
     connection_id = google_bigquery_connection.function_connection.id
-    source_uris = "[${google_storage_bucket.demo_images.url}/*]"
+    source_uris = ["${google_storage_bucket.demo_images.url}/*"]
     object_metadata = "Simple"
   }
 
@@ -81,7 +81,7 @@ resource "google_bigquery_routine" "create_remote_function_sp" {
     remote_function_name = google_cloudfunctions2_function.remote_function.name
     region = var.region
     bq_connection_id = google_bigquery_connection.function_connection.id
-    remote_function_url = google_cloudfunctions2_function.remote_function.output.function_url
+    remote_function_url = google_cloudfunctions2_function.remote_function.function_url
     }
   )
 }
