@@ -26,12 +26,12 @@ output "bigquery_editor_url" {
 
 output "create_remote_function_query" {
   value = templatefile("${path.module}/src/sql/provision_remote_function.sql", {
-    project_id           = module.project-services.project_id,
-    dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
-    remote_function_name = google_cloudfunctions2_function.remote_function.name
-    region               = var.region
-    bq_connection_id     = var.connection_id
-    remote_function_url  = google_cloudfunctions2_function.remote_function.service_config[0].uri
+    project_id          = module.project-services.project_id,
+    dataset_id          = google_bigquery_dataset.demo_dataset.dataset_id
+    bq_function_name    = "gemini_bq_demo"
+    region              = var.region
+    bq_connection_id    = var.connection_id
+    remote_function_url = google_cloudfunctions2_function.remote_function.service_config[0].uri
     }
   )
 }

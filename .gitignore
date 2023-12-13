@@ -1,0 +1,4 @@
+.terraform*
+.Terraform*
+
+.Python
