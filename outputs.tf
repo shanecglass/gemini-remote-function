@@ -30,7 +30,7 @@ output "create_remote_function_query" {
     dataset_id           = google_bigquery_dataset.demo_dataset.dataset_id
     remote_function_name = google_cloudfunctions2_function.remote_function.name
     region               = var.region
-    bq_connection_id     = google_bigquery_connection.function_connection.id
+    bq_connection_id     = var.connection_id
     remote_function_url  = google_cloudfunctions2_function.remote_function.service_config[0].uri
     }
   )
