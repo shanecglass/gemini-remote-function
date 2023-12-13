@@ -22,7 +22,7 @@ resource "google_service_account" "cloud_function_manage_sa" {
   display_name = "Cloud Functions Service Account"
 
   depends_on = [
-    time_sleep.wait_after_apis_activate,
+    time_sleep.wait_after_apis,
   ]
 }
 
@@ -78,6 +78,6 @@ resource "google_cloudfunctions2_function" "remote_function" {
 }
 
 output "function_url" {
-  value = google_cloudfunctions_function.default.service_config[0].uri
+  value = google_cloudfunctions2_function.remote_function.service_config[0].uri
 }
 

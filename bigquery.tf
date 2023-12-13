@@ -19,7 +19,7 @@ resource "google_bigquery_dataset" "demo_dataset" {
   project             = module.project-services.project_id
   dataset_id          = "gemini_demo"
   location            = var.region
-  depends_on          = [time_sleep.wait_after_apis_activate]
+  depends_on          = [time_sleep.wait_after_apis]
 }
 
 #Create BigQuery connection for Cloud Functions and GCS
@@ -30,7 +30,7 @@ resource "google_bigquery_connection" "function_connection" {
     friendly_name = "Gemini connection"
     description   = "Connecting to the remote function that analyzes imges using Gemini"
     cloud_resource {}
-    depends_on    = [ time_sleep.wait_after_apis_activate ]
+    depends_on    = [ time_sleep.wait_after_apis ]
 }
 
 #Grant the connection service account necessary permissions

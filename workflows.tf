@@ -21,7 +21,7 @@ resource "google_service_account" "workflow_service_account" {
   project      = module.project-services.project_id
   account_id   = "cloud-workflow-sa-${random_id.id.hex}"
   display_name = "Service Account for Cloud Workflows"
-  depends_on   = [time_sleep.wait_after_apis_activate]
+  depends_on   = [time_sleep.wait_after_apis]
 }
 
 ## Grant the Workflow service account access needed to execute its tasks
