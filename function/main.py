@@ -28,7 +28,7 @@ def download_to_local(image_uri, tmpdir):
   print(f"File to analze from GCS: ", image_uri)
   image_name = 'image.png'
   dest_path = os.path.join(tmpdir, image_name)
-  subprocess.run(f'gsutil cp {image_uri} {dest_path}')
+  subprocess.run(f'gsutil cp {image_uri} .{dest_path}')
   image = Image.load_from_file(image_name)
   print(f'{image_name} downloaded')
   return image
