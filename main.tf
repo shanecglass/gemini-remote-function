@@ -71,7 +71,7 @@ data "archive_file" "create_function_zip" {
 }
 
 # Wait until the Cloud Workflow has finished to complete setup
-resource "time_sleep" "wait_after_apis" {
+resource "time_sleep" "wait_after_workflow" {
   create_duration = "120s"
   depends_on      = [
     data.http.call_workflows_setup,
