@@ -37,20 +37,20 @@ create_remote_functions:
                     3: $${"CALL `"+project_id+"."+dataset_id+".provision_text_sample_table_sp`();"}
         - loopStepTables:
             for:
-              value: key
-              in: $${keys(map)}
-              steps:
-                -runQuery
-                  call: googleapis.bigquery.v2.jobs.query
-                  args:
-                    projectId: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-                    body:
-                      useLegacySql: false
-                      useQueryCache: false
-                      location: $${sys.get_env("GOOGLE_CLOUD_LOCATION")}
-                      timeoutMs: 600000
-                      query: $${map[key]}
-                  result: queryResult
-                - sumStep:
-                    assign:
-                      - results[key]: $${queryResult}
+                value: key
+                in: $${keys(map)}
+                steps:
+                    - runQuery:
+                        call: googleapis.bigquery.v2.jobs.query
+                        args:
+                            projectId: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+                            body:
+                                useLegacySql: false
+                                useQueryCache: false
+                                location: $${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+                                timeoutMs: 600000
+                                query: $${map[key]}
+                        result: queryResult
+                    - sumStep:
+                        assign:
+                            - results[key]: $${queryResult}
