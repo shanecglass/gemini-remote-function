@@ -43,9 +43,9 @@ resource "google_project_iam_member" "function_manage_roles" {
   depends_on = [google_service_account.cloud_function_manage_sa]
 }
 
-## Create a Cloud Function to serve as the remote function
-resource "google_cloudfunctions2_function" "remote_function" {
-  name        = "gemini-bq-demo"
+## Create a Cloud Function to serve as the remote function for image analysis
+resource "google_cloudfunctions2_function" "image_remote_function" {
+  name        = "gemini-bq-demo-image"
   project     = module.project-services.project_id
   location    = var.region
   description = "A Cloud Function that uses the Gemini Generative Model to analyze and describe images."
@@ -57,7 +57,7 @@ resource "google_cloudfunctions2_function" "remote_function" {
     source {
       storage_source {
         bucket = google_storage_bucket.function_source.name
-        object = google_storage_bucket_object.source_upload.name
+        object = google_storage_bucket_object.image_source_upload.name
       }
     }
   }
@@ -79,7 +79,38 @@ resource "google_cloudfunctions2_function" "remote_function" {
   depends_on = [time_sleep.wait_after_apis]
 }
 
-output "function_url" {
-  value = google_cloudfunctions2_function.remote_function.service_config[0].uri
-}
+## Create a Cloud Function to serve as the remote function for image analysis
+resource "google_cloudfunctions2_function" "text_remote_function" {
+  name        = "gemini-bq-demo-text"
+  project     = module.project-services.project_id
+  location    = var.region
+  description = "A Cloud Function that uses the Gemini Generative Model to analyze and generate text."
 
+  build_config {
+    runtime     = "python311"
+    entry_point = "run_it"
+
+    source {
+      storage_source {
+        bucket = google_storage_bucket.function_source.name
+        object = google_storage_bucket_object.text_source_upload.name
+      }
+    }
+  }
+
+  service_config {
+    max_instance_count               = 10
+    min_instance_count               = 1
+    available_memory                 = "2Gi"
+    timeout_seconds                  = 300
+    max_instance_request_concurrency = 1
+    available_cpu                    = "4"
+    ingress_settings                 = "ALLOW_ALL"
+    all_traffic_on_latest_revision   = true
+    service_account_email            = google_service_account.cloud_function_manage_sa.email
+    environment_variables = {
+      "PROJECT_ID" : "${module.project-services.project_id}",
+    "REGION" : "${var.region}" }
+  }
+  depends_on = [time_sleep.wait_after_apis]
+}

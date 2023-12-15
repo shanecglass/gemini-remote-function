@@ -68,39 +68,91 @@ resource "google_bigquery_table" "object_table" {
 }
 
 # Create a series of stored procedures to connect to the remote function and call it
-## Create the remote function. This stored procedure will be called by the workflow
-resource "google_bigquery_routine" "create_remote_function_sp" {
+## Create the image remote function. This stored procedure will be called by the workflow
+resource "google_bigquery_routine" "image_create_remote_function_sp" {
   project      = module.project-services.project_id
   dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
-  routine_id   = "remote_function_sp"
+  routine_id   = "image_remote_function_sp"
   routine_type = "PROCEDURE"
   language     = "SQL"
-  definition_body = templatefile("${path.module}/src/sql/provision_remote_function.sql", {
+  definition_body = templatefile("${path.module}/src/sql/image/provision_remote_function.sql", {
     project_id          = module.project-services.project_id,
     dataset_id          = google_bigquery_dataset.demo_dataset.dataset_id
-    bq_function_name    = "gemini_bq_demo"
+    bq_function_name    = var.image_function_name
     region              = var.region
     bq_connection_id    = var.connection_id
-    remote_function_url = google_cloudfunctions2_function.remote_function.service_config[0].uri
+    remote_function_url = google_cloudfunctions2_function.image_remote_function.service_config[0].uri
     }
   )
 }
 
-#Sample query to call the remote function
-resource "google_bigquery_routine" "query_remote_function_sp" {
+#Sample query to call the image remote function
+resource "google_bigquery_routine" "image_query_remote_function_sp" {
   project      = module.project-services.project_id
   dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
-  routine_id   = "query_remote_function_sp"
+  routine_id   = "image_query_remote_function_sp"
   routine_type = "PROCEDURE"
   language     = "SQL"
-  definition_body = templatefile("${path.module}/src/sql/query_remote_function.sql", {
+  definition_body = templatefile("${path.module}/src/sql/image/query_remote_function.sql", {
     project_id       = module.project-services.project_id,
     dataset_id       = google_bigquery_dataset.demo_dataset.dataset_id
-    bq_function_name = "gemini_bq_demo"
+    bq_function_name = var.image_function_name
     object_table_id  = google_bigquery_table.object_table.table_id
     }
   )
   depends_on = [
-    google_bigquery_routine.create_remote_function_sp
+    google_bigquery_routine.image_create_remote_function_sp
+  ]
+}
+
+## Create the image remote function. This stored procedure will be called by the workflow
+resource "google_bigquery_routine" "text_create_remote_function_sp" {
+  project      = module.project-services.project_id
+  dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
+  routine_id   = "text_remote_function_sp"
+  routine_type = "PROCEDURE"
+  language     = "SQL"
+  definition_body = templatefile("${path.module}/src/sql/text/provision_remote_function.sql", {
+    project_id          = module.project-services.project_id,
+    dataset_id          = google_bigquery_dataset.demo_dataset.dataset_id
+    bq_function_name    = var.text_function_name
+    region              = var.region
+    bq_connection_id    = var.connection_id
+    remote_function_url = google_cloudfunctions2_function.text_remote_function.service_config[0].uri
+    }
+  )
+}
+
+## Create the sample text input table. This stored procedure will be called by the workflow
+resource "google_bigquery_routine" "provision_text_sample_table_sp" {
+  project      = module.project-services.project_id
+  dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
+  routine_id   = "provision_text_sample_table_sp"
+  routine_type = "PROCEDURE"
+  language     = "SQL"
+  definition_body = templatefile("${path.module}/src/sql/provision_text_sample_table.sql", {
+    project_id = module.project-services.project_id,
+    dataset_id = google_bigquery_dataset.demo_dataset.dataset_id
+    }
+  )
+}
+
+#Sample query to call the image remote function
+resource "google_bigquery_routine" "text_query_remote_function_sp" {
+  project      = module.project-services.project_id
+  dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
+  routine_id   = "text_query_remote_function_sp"
+  routine_type = "PROCEDURE"
+  language     = "SQL"
+  definition_body = templatefile("${path.module}/src/sql/text/query_remote_function.sql", {
+    project_id       = module.project-services.project_id,
+    dataset_id       = google_bigquery_dataset.demo_dataset.dataset_id
+    bq_function_name = var.text_function_name
+    object_table_id  = google_bigquery_table.object_table.table_id
+    }
+  )
+  depends_on = [
+    google_bigquery_routine.text_create_remote_function_sp,
+    google_bigquery_routine.provision_text_sample_table_sp
   ]
 }

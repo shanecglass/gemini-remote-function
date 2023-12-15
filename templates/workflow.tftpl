@@ -20,29 +20,37 @@ main:
     params: []
     steps:
     - sub_create_tables:
-        call: create_tables
+        call: create_remote_functions
         result: output1
 
-# Subworkflow to create BigQuery tables
-create_tables:
+# Subworkflow to create BigQuery remote functions
+create_remote_functions:
     steps:
         - assignStepTables:
             assign:
                 - results: {}
                 - dataset_id: ${dataset_id}
                 - project_id: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-                - query_sp: $${"CALL `"+project_id+"."+dataset_id+".remote_function_sp`();"}
-        - createStepTables:
-            call: googleapis.bigquery.v2.jobs.query
-            args:
-                projectId: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-                body:
-                    useLegacySql: false
-                    useQueryCache: false
-                    location: $${sys.get_env("GOOGLE_CLOUD_LOCATION")}
-                    timeoutMs: 600000
-                    query: $${query_sp}
-            result: queryResult
-        - sumStep:
-            assign:
-                - results: $${queryResult}
+                - map:
+                    1: $${"CALL `"+project_id+"."+dataset_id+".image_remote_function_sp`();"}
+                    2: $${"CALL `"+project_id+"."+dataset_id+".text_remote_function_sp`();"}
+                    3: $${"CALL `"+project_id+"."+dataset_id+".provision_text_sample_table_sp`();"}
+        - loopStepTables:
+            for:
+              value: key
+              in: $${keys(map)}
+              steps:
+                -runQuery
+                  call: googleapis.bigquery.v2.jobs.query
+                  args:
+                    projectId: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+                    body:
+                      useLegacySql: false
+                      useQueryCache: false
+                      location: $${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+                      timeoutMs: 600000
+                      query: $${map[key]}
+                  result: queryResult
+                - sumStep:
+                    assign:
+                      - results[key]: $${queryResult}

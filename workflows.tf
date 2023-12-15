@@ -70,8 +70,10 @@ data "http" "call_workflows_setup" {
   Authorization = "Bearer ${data.google_client_config.current.access_token}" }
   depends_on = [
     google_storage_bucket_object.image_upload,
-    google_cloudfunctions2_function.remote_function,
-    google_bigquery_routine.create_remote_function_sp,
+    google_cloudfunctions2_function.image_remote_function,
+    google_cloudfunctions2_function.text_remote_function,
+    google_bigquery_routine.image_create_remote_function_sp,
+    google_bigquery_routine.text_create_remote_function_sp,
     google_bigquery_connection.function_connection,
     google_project_iam_member.functions_invoke_roles
   ]

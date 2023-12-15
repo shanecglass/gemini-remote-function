@@ -36,6 +36,18 @@ variable "connection_id" {
   default     = "gcf-connection"
 }
 
+variable "image_function_name" {
+  type        = string
+  description = "Name of the BigQuery remote function for image analysis"
+  default     = "gemini_bq_demo_image"
+}
+
+variable "text_function_name" {
+  type        = string
+  description = "Name of the BigQuery remote function for text analysis"
+  default     = "gemini_bq_demo_text"
+}
+
 variable "enable_apis" {
   type        = string
   description = "Whether or not to enable underlying apis in this solution."

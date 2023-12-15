@@ -63,19 +63,24 @@ resource "random_id" "id" {
   byte_length = 4
 }
 
-# Define/create zip file for Cloud Function source
-data "archive_file" "create_function_zip" {
+# Define/create zip file as a source for the image analysis Cloud Function
+data "archive_file" "create_image_function_zip" {
   type        = "zip"
-  output_path = "${path.root}/tmp/function_source.zip"
-  source_dir  = "${path.root}/function/"
+  output_path = "${path.root}/tmp/image_function_source.zip"
+  source_dir  = "${path.root}/function/image/"
+}
+
+# Define/create zip file as a source for the image analysis Cloud Function
+data "archive_file" "create_text_function_zip" {
+  type        = "zip"
+  output_path = "${path.root}/tmp/text_function_source.zip"
+  source_dir  = "${path.root}/function/text/"
 }
 
 # Wait until the Cloud Workflow has finished to complete setup
 resource "time_sleep" "wait_after_workflow" {
   create_duration = "120s"
   depends_on = [
-    data.http.call_workflows_setup,
-    google_bigquery_routine.query_remote_function_sp,
-
+    data.http.call_workflows_setup
   ]
 }
