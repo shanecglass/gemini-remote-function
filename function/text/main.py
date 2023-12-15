@@ -23,15 +23,13 @@ def list_text_input(request):
 def generate_text_from_prompt(text_string):
   text_model = GenerativeModel("gemini-pro")  # this is the text-to-text model
   responses = text_model.generate_content(text_string,
-                                          stream=True
+                                          stream=False
                                           )
-  for response in responses:
-    output = response.text
-    output = output.strip()
-    output = output.split("\n")
-    output = " ".join(output)
-    print(output)
-    return output
+  output = responses.text
+  output = output.strip()
+  output = " ".join(l for l in output.splitlines() if l)
+  print(output)
+  return output
 
 
 def check_string(input_string):
@@ -49,7 +47,7 @@ def run_it(request):
     text_output = generate_text_from_prompt(text_to_analyze)
     return_value = []
     result = check_string(text_output)
-    return_value.append(result)
+    return_value.append(text_output)
     return_json = json.dumps({"replies": return_value})
     return return_json
   except Exception as e:
