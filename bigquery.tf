@@ -81,7 +81,7 @@ resource "google_bigquery_routine" "image_create_remote_function_sp" {
     bq_function_name    = var.image_function_name
     region              = var.region
     bq_connection_id    = var.connection_id
-    remote_function_url = google_cloudfunctions2_function.image_remote_function.service_config[0].gcf_uri
+    remote_function_url = google_cloudfunctions2_function.image_remote_function.service_config[0].uri
     }
   )
 }
@@ -105,6 +105,20 @@ resource "google_bigquery_routine" "image_query_remote_function_sp" {
   ]
 }
 
+## Create the sample text input table. This stored procedure will be called by the workflow
+resource "google_bigquery_routine" "provision_text_sample_table_sp" {
+  project      = module.project-services.project_id
+  dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
+  routine_id   = "provision_text_sample_table_sp"
+  routine_type = "PROCEDURE"
+  language     = "SQL"
+  definition_body = templatefile("${path.module}/src/sql/provision_text_sample_table.sql", {
+    project_id = module.project-services.project_id,
+    dataset_id = google_bigquery_dataset.demo_dataset.dataset_id
+    }
+  )
+}
+
 ## Create the image remote function. This stored procedure will be called by the workflow
 resource "google_bigquery_routine" "text_create_remote_function_sp" {
   project      = module.project-services.project_id
@@ -118,21 +132,7 @@ resource "google_bigquery_routine" "text_create_remote_function_sp" {
     bq_function_name    = var.text_function_name
     region              = var.region
     bq_connection_id    = var.connection_id
-    remote_function_url = google_cloudfunctions2_function.text_remote_function.service_config[0].gcf_uri
-    }
-  )
-}
-
-## Create the sample text input table. This stored procedure will be called by the workflow
-resource "google_bigquery_routine" "provision_text_sample_table_sp" {
-  project      = module.project-services.project_id
-  dataset_id   = google_bigquery_dataset.demo_dataset.dataset_id
-  routine_id   = "provision_text_sample_table_sp"
-  routine_type = "PROCEDURE"
-  language     = "SQL"
-  definition_body = templatefile("${path.module}/src/sql/provision_text_sample_table.sql", {
-    project_id = module.project-services.project_id,
-    dataset_id = google_bigquery_dataset.demo_dataset.dataset_id
+    remote_function_url = google_cloudfunctions2_function.text_remote_function.service_config[0].uri
     }
   )
 }

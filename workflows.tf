@@ -41,6 +41,8 @@ resource "google_project_iam_member" "workflow_service_account_roles" {
   member  = "serviceAccount:${google_service_account.workflow_service_account.email}"
 }
 
+
+
 ## Create the workflow
 resource "google_workflows_workflow" "workflow" {
   name            = "initial-workflow"
@@ -55,6 +57,18 @@ resource "google_workflows_workflow" "workflow" {
 
   depends_on = [
     google_project_iam_member.workflow_service_account_roles,
+    google_bigquery_connection.function_connection,
+    google_bigquery_routine.image_create_remote_function_sp,
+    google_bigquery_routine.image_query_remote_function_sp,
+    google_bigquery_routine.provision_text_sample_table_sp,
+    google_bigquery_routine.text_create_remote_function_sp,
+    google_bigquery_routine.text_query_remote_function_sp,
+    google_bigquery_table.object_table,
+    google_cloudfunctions2_function.image_remote_function,
+    google_cloudfunctions2_function.text_remote_function,
+    google_storage_bucket_object.image_upload,
+    google_project_iam_member.functions_invoke_roles,
+    time_sleep.wait_after_functions,
   ]
 }
 
@@ -69,13 +83,19 @@ data "http" "call_workflows_setup" {
     Accept = "application/json"
   Authorization = "Bearer ${data.google_client_config.current.access_token}" }
   depends_on = [
-    google_storage_bucket_object.image_upload,
+    google_workflows_workflow.workflow,
+    google_bigquery_connection.function_connection,
+    google_bigquery_routine.image_create_remote_function_sp,
+    google_bigquery_routine.image_query_remote_function_sp,
+    google_bigquery_routine.provision_text_sample_table_sp,
+    google_bigquery_routine.text_create_remote_function_sp,
+    google_bigquery_routine.text_query_remote_function_sp,
+    google_bigquery_table.object_table,
     google_cloudfunctions2_function.image_remote_function,
     google_cloudfunctions2_function.text_remote_function,
-    google_bigquery_routine.image_create_remote_function_sp,
-    google_bigquery_routine.text_create_remote_function_sp,
-    google_bigquery_connection.function_connection,
-    google_project_iam_member.functions_invoke_roles
+    google_storage_bucket_object.image_upload,
+    google_project_iam_member.functions_invoke_roles,
+    time_sleep.wait_after_functions,
   ]
 }
 

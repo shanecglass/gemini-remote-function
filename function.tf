@@ -114,3 +114,12 @@ resource "google_cloudfunctions2_function" "text_remote_function" {
   }
   depends_on = [time_sleep.wait_after_apis]
 }
+
+# Wait until after the function is created to deconflict resource creation
+resource "time_sleep" "wait_after_functions" {
+  create_duration = "5s"
+  depends_on = [
+    google_cloudfunctions2_function.image_remote_function,
+    google_cloudfunctions2_function.text_remote_function,
+  ]
+}
