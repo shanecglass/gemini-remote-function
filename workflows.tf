@@ -29,6 +29,7 @@ resource "google_project_iam_member" "workflow_service_account_roles" {
   for_each = toset([
     "roles/workflows.admin",
     "roles/run.invoker",
+    "roles/cloudfunctions.invoker",
     "roles/iam.serviceAccountTokenCreator",
     "roles/storage.objectAdmin",
     "roles/bigquery.connectionAdmin",

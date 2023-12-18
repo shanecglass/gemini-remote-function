@@ -48,6 +48,10 @@ module "project-services" {
       roles = [
         "roles/cloudfunctions.invoker"
       ]
+      api = "run.googleapis.com"
+      roles = [
+        "roles/run.invoker"
+      ]
     }
   ]
 }
