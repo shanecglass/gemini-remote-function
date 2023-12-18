@@ -81,7 +81,7 @@ resource "google_bigquery_routine" "image_create_remote_function_sp" {
     bq_function_name    = var.image_function_name
     region              = var.region
     bq_connection_id    = var.connection_id
-    remote_function_url = google_cloudfunctions2_function.image_remote_function.service_config[0].uri
+    remote_function_url = google_cloudfunctions2_function.image_remote_function.service_config[0].gcf_uri
     }
   )
 }
@@ -118,7 +118,7 @@ resource "google_bigquery_routine" "text_create_remote_function_sp" {
     bq_function_name    = var.text_function_name
     region              = var.region
     bq_connection_id    = var.connection_id
-    remote_function_url = google_cloudfunctions2_function.text_remote_function.service_config[0].uri
+    remote_function_url = google_cloudfunctions2_function.text_remote_function.service_config[0].gcf_uri
     }
   )
 }
