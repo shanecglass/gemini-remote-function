@@ -5,7 +5,6 @@ import vertexai
 from vertexai.preview import generative_models
 from vertexai.preview.generative_models import GenerativeModel
 
-
 @functions_framework.http
 def list_text_input(request):
   print(request)
