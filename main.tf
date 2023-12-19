@@ -36,6 +36,7 @@ module "project-services" {
     "storage.googleapis.com",
     "storage-api.googleapis.com",
     "workflows.googleapis.com",
+    "vision.googleapis.com",
   ]
 
   activate_api_identities = [
@@ -56,12 +57,6 @@ module "project-services" {
   ]
 }
 
-# Wait until after the APIs are activated to being setting up infrastructure
-resource "time_sleep" "wait_after_apis" {
-  create_duration = "90s"
-  depends_on      = [module.project-services]
-}
-
 # Create random ID to be used for deployment uniqueness
 resource "random_id" "id" {
   byte_length = 4
@@ -79,6 +74,43 @@ data "archive_file" "create_text_function_zip" {
   type        = "zip"
   output_path = "${path.root}/tmp/text_function_source.zip"
   source_dir  = "${path.root}/function/text/"
+}
+
+# Wait until after the APIs are activated to being setting up infrastructure
+resource "time_sleep" "wait_after_apis" {
+  create_duration = "90s"
+  depends_on      = [module.project-services]
+}
+
+data "google_client_config" "current" {
+}
+
+data "http" "call_vision_api" {
+  url    = "https://vision.googleapis.com/v1/images:annotate/projects/${module.project-services.project_id}/locations/${var.region}/workflows/${google_workflows_workflow.workflow.name}/executions"
+  method = "POST"
+  request_headers = {
+    Accept        = "application/json"
+    request_body  = <<-EOT
+    {
+      "requests": [
+        {
+          "image": {
+            "source": {
+              "gcsImageUri": "${google_storage_bucket_object.image_upload}/images_004f71969864e68a.jpg"
+            }
+          },
+          "features": [
+            {
+              "type": "LANDMARK_DETECTION"
+            }
+          ]
+        }
+      ]
+    }
+  EOT
+    Authorization = "Bearer ${data.google_client_config.current.access_token}"
+  }
+  depends_on = [google_storage_bucket_object.image_source_upload]
 }
 
 # Wait until the Cloud Workflow has finished to complete setup

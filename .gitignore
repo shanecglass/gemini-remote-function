@@ -2,3 +2,5 @@
 .Terraform*
 
 .Python
+
+.venv*

@@ -33,3 +33,8 @@ output "text_function_url" {
   value       = google_cloudfunctions2_function.text_remote_function.url
   description = "The URL to invoke the text function"
 }
+
+output "vision_api_landmark_detection" {
+  value = data.http.call_vision_api
+  description = "The JSON output of the Vision API analysis of the Grand Canyon photo"
+}
