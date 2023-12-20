@@ -96,7 +96,7 @@ data "http" "call_vision_api" {
         {
           "image": {
             "source": {
-              "gcsImageUri": "${google_storage_bucket_object.image_upload.name}/images_004f71969864e68a.jpg"
+              "gcsImageUri": "${google_storage_bucket_object.demo_images.name}/images_004f71969864e68a.jpg"
             }
           },
           "features": [
