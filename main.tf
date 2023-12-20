@@ -90,6 +90,7 @@ data "http" "call_vision_api" {
   method = "POST"
   request_headers = {
     Accept        = "application/json"
+    x-goog-user-project = "${module.project-services.project_id}"
     Authorization = "Bearer ${data.google_client_config.current.access_token}"
     request_body = jsonencode(<<-EOT
 {
