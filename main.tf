@@ -31,7 +31,10 @@ module "project-services" {
     "cloudfunctions.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "config.googleapis.com",
+    "dataflow.googleapis.com",
+    "dataform.googleapis.com",
     "logging.googleapis.com",
+    "notebooks.googleapis.com",
     "run.googleapis.com",
     "serviceusage.googleapis.com",
     "storage.googleapis.com",
@@ -84,37 +87,8 @@ resource "time_sleep" "wait_after_apis" {
 }
 
 data "google_client_config" "current" {
-  depends_on = [ time_sleep.wait_after_apis ]
+  depends_on = [time_sleep.wait_after_apis]
 }
-
-# data "http" "call_vision_api" {
-#   url    = "https://vision.googleapis.com/v1/images:annotate"
-#   method = "POST"
-#   request_headers = {
-#     Authorization = "Bearer ${data.google_client_config.current.access_token}"
-#     x-goog-user-project = "${module.project-services.project_id}"
-#     Content-Type        = "application/json; charset=utf-8"
-#     request_body = jsonencode(
-# {
-#   "requests": [
-#     {
-#       "image": {
-#         "source": {
-#           "gcsImageUri": "${google_storage_bucket.demo_images.url}/images_004f71969864e68a.jpg"
-#         }
-#       },
-#       "features": [
-#         {
-#           "type": "LANDMARK_DETECTION"
-#         }
-#       ]
-#     }
-#   ]
-# }
-#     )
-#   }
-#   depends_on = [google_storage_bucket_object.image_source_upload]
-# }
 
 # Wait until the Cloud Workflow has finished to complete setup
 resource "time_sleep" "wait_after_workflow" {

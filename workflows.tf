@@ -57,7 +57,7 @@ resource "google_workflows_workflow" "workflow" {
   })
 
   depends_on = [
-    google_project_iam_member.workflow_service_account_roles,
+    google_service_account.workflow_service_account,
     google_bigquery_connection.function_connection,
     google_bigquery_routine.image_create_remote_function_sp,
     google_bigquery_routine.image_query_remote_function_sp,
