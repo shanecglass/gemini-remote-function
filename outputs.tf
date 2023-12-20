@@ -20,8 +20,8 @@ output "image_bucket" {
 }
 
 output "bigquery_editor_url" {
-  value       = "https://console.cloud.google.com/bigquery?project=${module.project-services.project_id}&ws=!1m5!1m4!6m3!1s${module.project-services.project_id}!2s${google_bigquery_dataset.demo_dataset.dataset_id}"
-  description = "The URL to launch the BigQuery editor with the sample query procedure opened"
+  value       = "https://console.cloud.google.com/bigquery?project=${module.project-services.project_id}&ws=!1m5!1m4!6m3!1s${module.project-services.project_id}!2s${google_bigquery_dataset.demo_dataset.dataset_id}!2sgemini_demo!3simage_query_remote_function_sp"
+  description = "The URL to launch the BigQuery editor to invoke the image analysis procedure opened"
 }
 
 output "image_function_url" {
