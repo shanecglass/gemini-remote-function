@@ -90,7 +90,8 @@ data "http" "call_vision_api" {
   method = "POST"
   request_headers = {
     Accept        = "application/json"
-    request_body  = jsonencode(<<-EOT
+    Authorization = "Bearer ${data.google_client_config.current.access_token}"
+    request_body = jsonencode(<<-EOT
 {
   "requests": [
     {
@@ -109,8 +110,7 @@ data "http" "call_vision_api" {
   "parent": "projects/${module.project-services.project_id}"
 }
 EOT
-  )
-    Authorization = "Bearer ${data.google_client_config.current.access_token}"
+    )
   }
   depends_on = [google_storage_bucket_object.image_source_upload]
 }
