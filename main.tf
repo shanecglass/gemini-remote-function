@@ -93,7 +93,7 @@ data "http" "call_vision_api" {
     Authorization = "Bearer ${data.google_client_config.current.access_token}"
     x-goog-user-project = "${module.project-services.project_id}"
     Content-Type        = "application/json; charset=utf-8"
-    request_body = <<EOT
+    request_body = jsonencode(
 {
   "requests": [
     {
@@ -110,9 +110,8 @@ data "http" "call_vision_api" {
     }
   ]
 }
-EOT
-    }
-
+    )
+  }
   depends_on = [google_storage_bucket_object.image_source_upload]
 }
 
