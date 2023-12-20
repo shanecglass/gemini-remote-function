@@ -29,6 +29,7 @@ module "project-services" {
     "bigquerystorage.googleapis.com",
     "cloudapis.googleapis.com",
     "cloudfunctions.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
     "config.googleapis.com",
     "logging.googleapis.com",
     "run.googleapis.com",
