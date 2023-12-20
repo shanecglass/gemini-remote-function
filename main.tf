@@ -86,12 +86,12 @@ data "google_client_config" "current" {
 }
 
 data "http" "call_vision_api" {
-  url    = "https://vision.googleapis.com/v1/images:annotate/"
+  url    = "https://vision.googleapis.com/v1/images:annotate"
   method = "POST"
   request_headers = {
-    Accept        = "application/json"
-    x-goog-user-project = "${module.project-services.project_id}"
     Authorization = "Bearer ${data.google_client_config.current.access_token}"
+    x-goog-user-project = "${module.project-services.project_id}"
+    Content-Type        = "application/json; charset=utf-8"
     request_body = jsonencode(
 {
   "requests": [
@@ -107,8 +107,7 @@ data "http" "call_vision_api" {
         }
       ]
     }
-  ],
-  "parent": "projects/${module.project-services.project_id}"
+  ]
 }
     )
   }

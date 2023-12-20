@@ -1,17 +1,17 @@
 {
   "requests": [
     {
-      "image": {
-        "source": {
-          "gcsImageUri": "${google_storage_bucket.demo_images.url}/images_004f71969864e68a.jpg"
-        }
-      },
       "features": [
         {
+          "maxResults": 1,
           "type": "LANDMARK_DETECTION"
         }
-      ]
+      ],
+      "image": {
+        "source": {
+          "gcsImageUri": "gs://gemini-bq-demo-images0c78fbd9/images_004f71969864e68a.jpg"
+        }
+      }
     }
-  ],
-  "parent": "projects/${module.project-services.project_id}/locations/us"
+  ]
 }
