@@ -90,24 +90,25 @@ data "http" "call_vision_api" {
   method = "POST"
   request_headers = {
     Accept        = "application/json"
-    request_body  = <<-EOT
+    request_body  = jsonencode(<<-EOT
+{
+  "requests": [
     {
-      "requests": [
+      "image": {
+        "source": {
+          "gcsImageUri": "${google_storage_bucket.demo_images.url}/images_004f71969864e68a.jpg"
+        }
+      },
+      "features": [
         {
-          "image": {
-            "source": {
-              "gcsImageUri": "${google_storage_bucket.demo_images.name}/images_004f71969864e68a.jpg"
-            }
-          },
-          "features": [
-            {
-              "type": "LANDMARK_DETECTION"
-            }
-          ]
+          "type": "LANDMARK_DETECTION"
         }
       ]
     }
-  EOT
+  ]
+}
+EOT
+  )
     Authorization = "Bearer ${data.google_client_config.current.access_token}"
   }
   depends_on = [google_storage_bucket_object.image_source_upload]

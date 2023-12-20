@@ -1,0 +1,16 @@
+{
+  "requests": [
+    {
+      "image": {
+        "source": {
+          "gcsImageUri": "gs://gemini-bq-demo-images01f79e29/images_004f71969864e68a.jpg"
+        }
+      },
+      "features": [
+        {
+          "type": "LANDMARK_DETECTION"
+        }
+      ]
+    }
+  ]
+}
