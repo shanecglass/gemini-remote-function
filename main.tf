@@ -29,7 +29,6 @@ module "project-services" {
     "bigquerystorage.googleapis.com",
     "cloudapis.googleapis.com",
     "cloudfunctions.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
     "config.googleapis.com",
     "dataflow.googleapis.com",
     "dataform.googleapis.com",
