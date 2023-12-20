@@ -86,7 +86,7 @@ data "google_client_config" "current" {
 }
 
 data "http" "call_vision_api" {
-  url    = "https://vision.googleapis.com/v1/images:annotate/projects/${module.project-services.project_id}/locations/${var.region}/workflows/${google_workflows_workflow.workflow.name}/executions"
+  url    = "https://vision.googleapis.com/v1/images:annotate/"
   method = "POST"
   request_headers = {
     Accept        = "application/json"
