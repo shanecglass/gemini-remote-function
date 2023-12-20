@@ -34,8 +34,8 @@ output "text_function_url" {
   description = "The URL to invoke the text function"
 }
 
-output "vision_api_landmark_detection" {
-  value       = jsondecode(data.http.call_vision_api.response_body)
-  description = "The JSON output of the Vision API analysis of the Grand Canyon photo"
-  sensitive = true
-}
+# output "vision_api_landmark_detection" {
+#   value       = jsondecode(data.http.call_vision_api.response_body)
+#   description = "The JSON output of the Vision API analysis of the Grand Canyon photo"
+#   sensitive = true
+# }
