@@ -90,7 +90,8 @@ data "http" "call_vision_api" {
   method = "POST"
   request_headers = {
     Authorization = "Bearer ${data.google_client_config.current.access_token}"
-    x-goog-user-project = "${module.project-services.project_id}"
+    x-goog-user-project = "gemini-bq-function"
+    # "${module.project-services.project_id}"
     Content-Type        = "application/json; charset=utf-8"
     request_body = jsonencode(
 {
