@@ -35,6 +35,6 @@ output "text_function_url" {
 }
 
 output "vision_api_landmark_detection" {
-  value       = jsondecode(data.http.call_vision_api.response_body)
+  value       = data.http.call_vision_api
   description = "The JSON output of the Vision API analysis of the Grand Canyon photo"
 }
