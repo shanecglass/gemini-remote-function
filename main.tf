@@ -105,7 +105,8 @@ data "http" "call_vision_api" {
         }
       ]
     }
-  ]
+  ],
+  "parent": "projects/${module.project-services.project_id}"
 }
 EOT
   )
