@@ -1,6 +1,6 @@
 # Analyzing images and text with Gemini using BigQuery & Remote Functions
 
-This repo provides an example of how to use Gemini, Google's largest and most capable AI model, to analyze your BigQuery data. BigQuery and Remote Functions can be used to analyze images and text input using Gemini with Vertex AI on Google Cloud. The following instructions should help you get started.
+This repo provides an example of how to use [Gemini](https://blog.google/technology/ai/gemini-api-developers-cloud/), Google's largest and most capable AI model, to analyze your BigQuery data. BigQuery and Remote Functions can be used to analyze images and text input using Gemini with Vertex AI on Google Cloud. The following instructions should help you get started.
 
 Before you start: Though using a new GCP project for this example is not a requirement, it might be easiest to use a new GCP project for this. This makes cleanup much easier, as you can delete the whole project to ensure all assets are removed and it ensures no potential conflicts with existing resources. You can also remove resources by running `terraform destroy` after you deploy the resources, but it will also disable the associated APIs.
 
