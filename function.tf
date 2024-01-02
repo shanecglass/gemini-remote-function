@@ -65,11 +65,12 @@ resource "google_cloudfunctions2_function" "image_remote_function" {
 
   service_config {
     max_instance_count               = 10
-    min_instance_count               = 1
-    available_memory                 = "2Gi"
+  # min_instance_count can be set to 1 to improve performance and responsiveness
+    min_instance_count               = 0
+    available_memory                 = "512mb"
     timeout_seconds                  = 300
-    max_instance_request_concurrency = 1
-    available_cpu                    = "4"
+    max_instance_request_concurrency = 5
+    available_cpu                    = "2"
     ingress_settings                 = "ALLOW_ALL"
     all_traffic_on_latest_revision   = true
     service_account_email            = google_service_account.cloud_function_manage_sa.email
@@ -101,11 +102,12 @@ resource "google_cloudfunctions2_function" "text_remote_function" {
 
   service_config {
     max_instance_count               = 10
-    min_instance_count               = 1
-    available_memory                 = "2Gi"
+  # min_instance_count can be set to 1 to improve performance and responsiveness
+    min_instance_count               = 0
+    available_memory                 = "512mb"
     timeout_seconds                  = 300
-    max_instance_request_concurrency = 1
-    available_cpu                    = "4"
+    max_instance_request_concurrency = 5
+    available_cpu                    = "2"
     ingress_settings                 = "ALLOW_ALL"
     all_traffic_on_latest_revision   = true
     service_account_email            = google_service_account.cloud_function_manage_sa.email
