@@ -24,12 +24,6 @@ variable "region" {
   description = "Google Cloud Region"
 }
 
-variable "image_object_path" {
-  type        = string
-  description = "URI for the GCS bucket containing the images to be analyzed. This is connected to BigQuery as a GCS object table"
-  default     = "[gs://gemini-image-recognition-demo/images/*.jpg]"
-}
-
 variable "connection_id" {
   type        = string
   description = "Default ID for the BigQuery connection that is created"
