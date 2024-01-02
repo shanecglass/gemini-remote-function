@@ -1,11 +1,37 @@
 # Analyzing images and text with Gemini using BigQuery & Remote Functions
 
-This repo provides an example of how to use [Gemini](https://blog.google/technology/ai/gemini-api-developers-cloud/), Google's largest and most capable AI model, to analyze your BigQuery data. BigQuery and Remote Functions can be used to analyze images and text input using Gemini with Vertex AI on Google Cloud. The following instructions should help you get started.
+This repo provides an example of how to use [Gemini](https://blog.google/technology/ai/gemini-api-developers-cloud/), Google's largest and most capable AI model, through the [Vertex AI Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/quickstart-multimodal) to analyze your BigQuery data. BigQuery and Remote Functions can be used to analyze images and text input using the [Vertex AI Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/quickstart-multimodal) on Google Cloud. The following instructions should help you get started.
 
 Before you start: Though using a new GCP project for this example is not a requirement, it might be easiest to use a new GCP project for this. This makes cleanup much easier, as you can delete the whole project to ensure all assets are removed and it ensures no potential conflicts with existing resources. You can also remove resources by running `terraform destroy` after you deploy the resources, but it will also disable the associated APIs.
 
+# Architecture Diagrams
+
+## Image analysis
+<p align="center">
+  <img src="./src/architecture/image_analysis_diagram.png" alt="Architecture Diagram for analyzing images" width=800px>
+</p>
+
+<ol>
+  <li>Sample images are uploaded to a Cloud Storage bucket and a GCS object table is created in BigQuery</li>
+  <li>Cloud Workflows creates a stored procedure in BigQuery that contains the sample query, which references the object table created in step 1 to pass images to the remote function for analysis using the Vertex AI Gemini API</li>
+  <li>The stored procedure from step 2 is used to invoke the Cloud Function through a BigQuery connection</li>
+  <li>The Cloud Function analyzes the sample images by passing them to the Vertex AI Gemini API (step 5) to get a brief description of the sample images and returns results from the Vertex AI Gemini API as query results</li>
+</ol>
+
+## Text analysis
+<p align="center">
+  <img src="./src/architecture/text_analysis_diagram.png" alt="Architecture Diagram for analyzing images" width=800px>
+</p>
+<ol>
+  <li>Cloud Workflows creates a stored procedure in BigQuery that contains the sample query and provisions the <code>sample_text_prompts</code> table, which contains sample text prompts to describe various landmarks. The sample query passes these prompts to the remote function for analysis using the Vertex AI Gemini API</li>
+  <li>The stored procedure from step 2 is used to invoke the Cloud Function through a BigQuery connection</li>
+  <li>The Cloud Function analyzes the text input from the sample text by passing them to the Vertex AI Gemini API (step 4) to get generate a text description of the sample images and returns results from the Vertex AI Gemini API as query results</li>
+  <li>The Cloud Function analyzes the text input from the sample text by passing them to the Vertex AI Gemini API (step 4) to get generate a text response to each prompt and returns results from the Vertex AI Gemini API as query results</li>
+</ol>
+
+
 ## What can you do?
-This deploys 2 Cloud Functions and connects them to BigQuery. One function takes an image from GCS as an input and uses Gemini to create a brief description of it. The other takes text in a BigQuery table as an input and generates a response. This demo deploys all the necessary sample data to help you get started as easily as possible.
+This deploys 2 Cloud Functions and connects them to BigQuery. One function takes an image from GCS as an input and uses the [Vertex AI Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/quickstart-multimodal) to create a brief description of it. The other takes text in a BigQuery table as an input and generates a response. This demo deploys all the necessary sample data to help you get started as easily as possible.
 
 After you deploy the resources, you can simply navigate to the BigQuery console and invoke the `image_query_remote_function_sp` stored procedure or the `text_query_remote_function_sp` stored procedure to get started.
 
@@ -93,8 +119,19 @@ Apply complete!
 
 The Terraform output also lists the following additional information that you'll need:
 - The link to open the BigQuery editor to invoke the `image_query_remote_function_sp` stored procedure
+- The link to open the BigQuery editor to invoke the `text_query_remote_function_sp` stored procedure
 
 ### 2. **Analyze your data!**
-From here, click on the BigQuery editor URL in your Terraform outputs to analyze the image and text data! Gemini will analyze the landmark images and prewritten text prompts when you invoke the stored procedures. Simply click `Invoke stored procedure` for the `image_query_remote_function_sp` stored procedure that loads when you click the BigQuery editor URL, then click `Run` in the resulting query to get the response generated by Gemini through your Remote Function.
+#### Analyzing images
+From here, click on the `bigquery_editor_image_sp` URL in your Terraform outputs to start! Gemini will analyze the landmark images when you invoke the stored procedure through the Vertex AI Gemini API. Simply click `Invoke stored procedure` for the `image_query_remote_function_sp` stored procedure that loads when you click the URL, then click `Run` for the resulting query to get the image descriptions generated by Gemini through your Remote Function.
+<p align="center">
+  <img src="./src/examples/image_query_experience.gif" alt="A demo of how to analyze text prompts in the console" width=800px>
+</p>
+
+#### Analyzing text prompts
+The process for analyzing text prompts is very similar. Click on the `bigquery_editor_text_sp` URL in your Terraform outputs to start. Gemini will analyze the prewritten text prompts when you invoke the stored procedures through the Vertex AI Gemini API. Simply click `Invoke stored procedure` for the `text_query_remote_function_sp` stored procedure that loads when you click the URL, then click `Run` in the resulting query to get the responses generated by Gemini through your Remote Function.
+<p align="center">
+  <img src="./src/examples/text_query_experience.gif" alt="A demo of how to analyze text prompts in the console" width=800px>
+</p>
 
 If you need to see your Terraform outputs again, simply enter `terraform output` into your command line.
