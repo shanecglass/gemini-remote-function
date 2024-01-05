@@ -6,3 +6,5 @@
 .venv*
 
 tmp*
+
+.DS_Store*
