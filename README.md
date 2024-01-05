@@ -11,7 +11,6 @@ This repo allows you to pass requests to Gemini using SQL to send the requests a
   - You can more easily analyze a large batch of data rather than having to make individual requests for each image or text prompt
   - You don't need to export your data from BigQuery before you can analyze it with Gemini
 <br>
-<br>
 
 # Getting Started
 
