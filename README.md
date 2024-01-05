@@ -136,7 +136,11 @@ Installing this demo (by running `terraform apply` in the Cloud Shell CLI) and r
 Keep in mind that generative AI models like Gemini are non-deterministic, so associated costs will vary based on the output length and cannot be definitively estimated.
 
 # Make it your own
-You can adapt this demo for your own use case! You can get started analyzing any images you have uploaded to Cloud Storage by:
+You can adapt this demo for your own use case! Check out the instructions below for image and text analysis.
+
+## Analyze images
+
+You can get started analyzing any images you have uploaded to Cloud Storage by:
 1. [Create a Cloud Storage object table](https://cloud.google.com/bigquery/docs/object-tables)
 
 If your bucket is stored in the same region that you deployed this demo, you should be able to reuse the existing BigQuery connection. If not, you will likely have to create a new one.
@@ -147,4 +151,10 @@ You can do this by editing the `gemini-bq-demo-image` that was deployed. Click t
 
 Check out [this sample notebook](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/gemini/use-cases/intro_multimodal_use_cases.ipynb) for inspiration and ideas of what you can ask Gemini to do with an image.
 
-3.
+3. Update the `image_query_remote_function_sp` stored procedure and run
+
+Update line 5 of the stored procedure to reference the object table you created in step 1 and run the query.
+
+## Analyze text
+
+You can get started by analyzing your own text inputs without having to modify the existing Cloud Function. Simply replace the `text_prompt` in line 3 of the `text_query_remote_function_sp` stored procedure with whatever text you want to analyze. You can enter a single string of text or you can reference a column of text prompts from a BigQuery table. If you are using a column from a BigQuery table, be sure to update the table reference on line 5 of the stored procedure.
