@@ -2,11 +2,11 @@
 
 # Overview
 
-This repo provides an example of how to use [Gemini](https://blog.google/technology/ai/gemini-api-developers-cloud/), Google's largest and most capable AI model, through the [Vertex AI Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/quickstart-multimodal) to analyze your BigQuery data. BigQuery and Remote Functions can be used to analyze images and text input using the [Vertex AI Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/quickstart-multimodal) on Google Cloud. The following instructions should help you get started.
+This repo provides an example of how to use [Gemini](https://blog.google/technology/ai/gemini-api-developers-cloud/), Google's largest and most capable AI model, to analyze your BigQuery data. BigQuery and Remote Functions can be used to analyze images and text input using the [Vertex AI Gemini API](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/quickstart-multimodal) on Google Cloud. The following instructions should help you get started.
 
 ## About this demo
 
-This repo allows you to pass requests to Gemini using SQL to send the requests and get the results back like you would for any other BigQuery query. This approach has several advantages:
+This repo allows you to pass requests to Gemini using SQL and get the results back like you would for any other BigQuery query. This approach has several advantages:
   - It allows users who are familiar with SQL to leverage the power of Gemini without needing to write additional code
   - You can more easily analyze a large batch of data rather than having to make individual requests for each image or text prompt
   - You don't need to export your data from BigQuery before you can analyze it with Gemini
