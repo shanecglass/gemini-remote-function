@@ -134,3 +134,17 @@ Installing this demo (by running `terraform apply` in the Cloud Shell CLI) and r
   - $0.18/month for Text Output
 
 Keep in mind that generative AI models like Gemini are non-deterministic, so associated costs will vary based on the output length and cannot be definitively estimated.
+
+# Make it your own
+You can adapt this demo for your own use case! You can get started analyzing any images you have uploaded to Cloud Storage by:
+1. [Create a Cloud Storage object table](https://cloud.google.com/bigquery/docs/object-tables)
+
+If your bucket is stored in the same region that you deployed this demo, you should be able to reuse the existing BigQuery connection. If not, you will likely have to create a new one.
+
+2. Modify the `context` variable on [line 40](https://github.com/shanecglass/gemini-remote-function/blob/0892e365feeec8dac6c6c3b3d67038e7964c3e65/function/image/main.py#L40C1-L41C1) of the Cloud Function
+
+You can do this by editing the `gemini-bq-demo-image` that was deployed. Click the Edit button at the top of the Function Details page, then click Next to see the in-line editor. Change the value of the `context` variable to provide tell Gemini what it should do with your images, then click Deploy.
+
+Check out [this sample notebook](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/gemini/use-cases/intro_multimodal_use_cases.ipynb) for inspiration and ideas of what you can ask Gemini to do with an image.
+
+3.
